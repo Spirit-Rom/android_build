@@ -85,7 +85,10 @@ LOCAL_DISABLE_STRICT := \
 	patchoat \
 	libart \
 	libart-compiler \
-	libart-disassembler
+	libart-disassembler \
+	camera.msm8084 \
+	mm-vdec-omx-test \
+	audio.primary.msm8960
 
 # Force no strict-aliasing on some modules
 LOCAL_FORCE_DISABLE_STRICT := \
