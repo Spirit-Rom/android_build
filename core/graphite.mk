@@ -1,4 +1,4 @@
-# Copyright (C) 2015 The SaberMod Project
+# Copyright (C) 2014-2015 The SaberMod Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,71 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Force disable some modules that are not compatible with graphite flags
-LOCAL_DISABLE_GRAPHITE := \
-	libunwind \
-	libFFTEm \
-	libicui18n \
-	libskia \
-	libvpx \
-	libmedia_jni \
-	libstagefright_mp3dec \
-	libart \
-	libstagefright_amrwbenc \
-	libpdfium \
-	libpdfiumcore \
-	libwebviewchromium \
-	libwebviewchromium_loader \
-	libwebviewchromium_plat_support \
-	libjni_filtershow_filters \
-	fio \
-	libavformat \
-	libavutil \
-	libswresample \
-	libavcodec \
-	libswscale \
-	libwebrtc_spl
 
-ifneq (1,$(words $(filter $(LOCAL_DISABLE_GRAPHITE), $(LOCAL_MODULE))))
-ifdef LOCAL_CONLYFLAGS
-LOCAL_CONLYFLAGS += \
-	-fgraphite \
-	-floop-flatten \
-	-floop-parallelize-all \
-	-ftree-loop-linear \
-	-floop-interchange \
-	-floop-strip-mine \
-	-floop-block
-else
-LOCAL_CONLYFLAGS := \
-	-fgraphite \
-	-floop-flatten \
-	-floop-parallelize-all \
-	-ftree-loop-linear \
-	-floop-interchange \
-	-floop-strip-mine \
-	-floop-block
-endif
+ifneq (1,$(words $(filter $(LOCAL_DISABLE_GRAPHITE),$(LOCAL_MODULE))))
+  ifdef LOCAL_CONLYFLAGS
+    LOCAL_CONLYFLAGS += $(GRAPHITE_FLAGS)
+  else
+    LOCAL_CONLYFLAGS := $(GRAPHITE_FLAGS)
+  endif
 
-ifdef LOCAL_CPPFLAGS
-LOCAL_CPPFLAGS += \
-	-fgraphite \
-	-floop-flatten \
-	-floop-parallelize-all \
-	-ftree-loop-linear \
-	-floop-interchange \
-	-floop-strip-mine \
-	-floop-block
-else
-LOCAL_CPPFLAGS := \
-	-fgraphite \
-	-floop-flatten \
-	-floop-parallelize-all \
-	-ftree-loop-linear \
-	-floop-interchange \
-	-floop-strip-mine \
-	-floop-block
-endif
-endif
+  ifdef LOCAL_CPPFLAGS
+    LOCAL_CPPFLAGS += $(GRAPHITE_FLAGS)
+  else
+    LOCAL_CPPFLAGS := $(GRAPHITE_FLAGS)
+  endif
 
+  ifndef LOCAL_LDFLAGS
+    LOCAL_LDFLAGS  := $(GRAPHITE_FLAGS)
+  else
+    LOCAL_LDFLAGS  += $(GRAPHITE_FLAGS)
+  endif
+endif
 #####

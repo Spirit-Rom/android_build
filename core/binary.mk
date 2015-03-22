@@ -112,6 +112,21 @@ endif
 # limitations under the License.
 #
 # Include custom gcc flags.  Seperate them so they can be easily managed.
+
+# O3
+ifeq ($(strip $(O3_OPTIMIZATIONS)),true)
+include $(BUILD_SYSTEM)/O3.mk
+endif
+
+# Do not use graphite on host modules or the clang compiler.
+ifneq ($(strip $(LOCAL_IS_HOST_MODULE)),true)
+  ifneq ($(strip $(LOCAL_CLANG)),true)
+
+    # If it gets this far enable graphite by default from here on out.
+    include $(BUILD_SYSTEM)/graphite.mk
+  endif
+endif
+
 ifeq ($(TARGET_USE_PIPE),true)
 include $(BUILD_SYSTEM)/pipe.mk
 endif
@@ -128,14 +143,6 @@ ifeq ($(ENABLE_GCCONLY),true)
 ifndef LOCAL_IS_HOST_MODULE
 ifeq ($(LOCAL_CLANG),)
 include $(BUILD_SYSTEM)/gcconly.mk
-endif
-endif
-endif
-
-ifeq ($(GRAPHITE_OPTS),true)
-ifndef LOCAL_IS_HOST_MODULE
-ifeq ($(LOCAL_CLANG),)
-include $(BUILD_SYSTEM)/graphite.mk
 endif
 endif
 endif
