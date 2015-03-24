@@ -67,15 +67,23 @@ $(combo_2nd_arch_prefix)TARGET_STRIP := $($(combo_2nd_arch_prefix)TARGET_TOOLS_P
 
 $(combo_2nd_arch_prefix)TARGET_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
 
-$(combo_2nd_arch_prefix)TARGET_arm_CFLAGS :=    -O2 \
-                        -fomit-frame-pointer \
-                        -fstrict-aliasing    \
-                        -funswitch-loops
+ifeq ($(O3_OPTIMIZATIONS),true)
+$(combo_2nd_arch_prefix)TARGET_arm_CFLAGS := -O3 -DNDEBUG \
+                                             -fomit-frame-pointer \
+                                             -fno-tree-vectorize \
+                                             -fno-inline-functions \
 
-# Modules can choose to compile some source as thumb.
-$(combo_2nd_arch_prefix)TARGET_thumb_CFLAGS :=  -mthumb \
-                        -Os \
-                        -fomit-frame-pointer
+$(combo_2nd_arch_prefix)TARGET_thumb_CFLAGS := -mthumb -O3 -DNDEBUG\
+                                               -fomit-frame-pointer \
+                                               -fno-tree-vectorize \
+                                               -fno-inline-functions \
+                                               -fno-unswitch-loops \
+                                               -Wno-error=array-bounds \
+                                               -Wno-error=strict-overflow
+else
+$(combo_2nd_arch_prefix)TARGET_arm_CFLAGS := -O2 -fomit-frame-pointer -funswitch-loops
+$(combo_2nd_arch_prefix)TARGET_thumb_CFLAGS := -mthumb -Os -fomit-frame-pointer
+endif
 
 ifeq ($(SUPPRES_UNUSED_WARNING),true)
 $(combo_2nd_arch_prefix)TARGET_arm_CFLAGS += -Wno-unused-parameter \
@@ -152,15 +160,18 @@ $(combo_2nd_arch_prefix)TARGET_GLOBAL_LDFLAGS += \
 
 $(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS += -mthumb-interwork
 
-$(combo_2nd_arch_prefix)TARGET_GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden
+ifeq ($(O3_OPTIMIZATIONS),true)
+$(combo_2nd_arch_prefix)TARGET_GLOBAL_CPPFLAGS += -O3 \
+                                                  -fvisibility-inlines-hidden \
+                                                  -DNDEBUG
+$(combo_2nd_arch_prefix)TARGET_RELEASE_CFLAGS := -O3 -DNDEBUG -g \
+                                                 -frerun-cse-after-loop \
+                                                 -frename-registers
 
-# More flags/options can be added here
-$(combo_2nd_arch_prefix)TARGET_RELEASE_CFLAGS := \
-			-DNDEBUG \
-			-g \
-			-fgcse-after-reload \
-			-frerun-cse-after-loop \
-			-frename-registers
+else
+ $(combo_2nd_arch_prefix)TARGET_GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden
+-$(combo_2nd_arch_prefix)TARGET_RELEASE_CFLAGS := -DNDEBUG -g -fgcse-after-reload -frerun-cse-after-loop -frename-registers
+endif
 
 ifeq ($(SUPPRES_UNUSED_WARNING),true)
 $(combo_2nd_arch_prefix)TARGET_GLOBAL_CPPFLAGS += -Wno-unused-parameter \

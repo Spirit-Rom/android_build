@@ -118,11 +118,6 @@ ifneq ($(strip $(LOCAL_IS_HOST_MODULE)),true)
   include $(BUILD_SYSTEM)/thumb_interwork.mk
 endif
 
-# O3
-ifeq ($(strip $(O3_OPTIMIZATIONS)),true)
-include $(BUILD_SYSTEM)/O3.mk
-endif
-
 # posix thread (pthread) support
 ifeq ($(strip $(ENABLE_PTHREAD)),true)
   include $(BUILD_SYSTEM)/pthread.mk
@@ -131,7 +126,6 @@ endif
 # Do not use graphite on host modules or the clang compiler.
 ifneq ($(strip $(LOCAL_IS_HOST_MODULE)),true)
   ifneq ($(strip $(LOCAL_CLANG)),true)
-
     # If it gets this far enable graphite by default from here on out.
     include $(BUILD_SYSTEM)/graphite.mk
   endif

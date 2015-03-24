@@ -49,12 +49,22 @@ $(combo_var_prefix)HAVE_STRLCPY := 0
 $(combo_var_prefix)HAVE_STRLCAT := 0
 $(combo_var_prefix)HAVE_KERNEL_MODULES := 0
 
-$(combo_var_prefix)GLOBAL_CFLAGS := -fno-exceptions -Wno-multichar
-$(combo_var_prefix)RELEASE_CFLAGS := -O2 -g
-$(combo_var_prefix)GLOBAL_CPPFLAGS :=
 $(combo_var_prefix)GLOBAL_LDFLAGS :=
 $(combo_var_prefix)GLOBAL_ARFLAGS := crsPD
 $(combo_var_prefix)GLOBAL_LD_DIRS :=
+
+ifeq ($(O3_OPTIMIZATIONS),true)
+$(combo_var_prefix)GLOBAL_CFLAGS := -O3 -DNDEBUG -g \
+                                    -fno-exceptions -Wno-multichar
+$(combo_var_prefix)RELEASE_CFLAGS := -O3 -g \
+                                     -DNDEBUG
+$(combo_var_prefix)GLOBAL_CPPFLAGS := -O3 -g \
+                                      -DNDEBUG
+else
+ $(combo_var_prefix)GLOBAL_CFLAGS := -fno-exceptions -Wno-multichar
+ $(combo_var_prefix)RELEASE_CFLAGS := -O2 -g
+ $(combo_var_prefix)GLOBAL_CPPFLAGS :=
+endif
 
 ifeq ($(SUPPRES_UNUSED_WARNING),true)
 $(combo_var_prefix)GLOBAL_CFLAGS += -Wno-unused-parameter \
